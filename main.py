@@ -9,10 +9,12 @@ def setup_containers():
 
     spacing = (WIDTH - (containers_scale.w * 4)) // 5
 
-    container_1 = Container(screen,"A",Pos(spacing,600), containers_scale)
-    container_2 = Container(screen,"B",Pos(spacing*2 + containers_scale.w,600), containers_scale)
-    container_3 = Container(screen,"C",Pos(spacing*3 + (containers_scale.w*2),600), containers_scale)
-    container_4 = Container(screen,"D",Pos(spacing*4 + (containers_scale.w*3),600), containers_scale)
+    containers.clear()
+    containers.append(Container(screen,"A",Pos(spacing,600), containers_scale))
+    containers.append(Container(screen,"B",Pos(spacing*2 + containers_scale.w,600), containers_scale))
+    containers.append(Container(screen,"C",Pos(spacing*3 + (containers_scale.w*2),600), containers_scale))
+    containers.append(Container(screen,"D",Pos(spacing*4 + (containers_scale.w*3),600), containers_scale))
+    
 
 pygame.init()
 
@@ -23,7 +25,11 @@ pygame.display.set_caption("Game Title")
 clock = pygame.time.Clock()
 FPS = 60
 
+trashes = []
+containers = []
+
 running = True
+setup_containers()
 
 while running:
     for event in pygame.event.get():
@@ -32,13 +38,24 @@ while running:
 
     screen.fill((220, 220, 220)) 
 
-    # Aquí irá todo lo que se dibuje (basura, contenedores, puntaje...)
+    for container in containers:
+        container.draw(screen)
 
-    trash_type = random.randint(1,4)
+    if random.randint(1, 30) == 1:
+        trash_type = random.choice(["A", "B", "C", "D"])
+        pos = Pos(random.randint(0, WIDTH - 50), 0)      
+        scale = Scale(50, 50)                            
+        velocity = random.randint(3, 7)                 
+        trashes.append(Trash(trash_type, pos, scale, velocity))
+
+    for trash in trashes[:]: 
+        trash.gravity()        
+        if trash.rect.top > HEIGHT:
+            trashes.remove(trash)
 
     
-    setup_containers()
-
+    for trash in trashes:
+        trash.draw(screen)
 
     pygame.display.flip()
     clock.tick(FPS)
