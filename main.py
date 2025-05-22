@@ -4,6 +4,16 @@ import sys
 import random
 from classes import *
 
+def setup_containers():
+    containers_scale = Scale(100,100)
+
+    spacing = (WIDTH - (containers_scale.w * 4)) // 5
+
+    container_1 = Container(screen,"A",Pos(spacing,600), containers_scale)
+    container_2 = Container(screen,"B",Pos(spacing*2 + containers_scale.w,600), containers_scale)
+    container_3 = Container(screen,"C",Pos(spacing*3 + (containers_scale.w*2),600), containers_scale)
+    container_4 = Container(screen,"D",Pos(spacing*4 + (containers_scale.w*3),600), containers_scale)
+
 pygame.init()
 
 WIDTH, HEIGHT = 1280, 720
@@ -26,8 +36,8 @@ while running:
 
     trash_type = random.randint(1,4)
 
-    container_1 = Container(screen,"A",Pos(100,0))
-
+    
+    setup_containers()
 
 
     pygame.display.flip()
@@ -35,3 +45,4 @@ while running:
 
 pygame.quit()
 sys.exit()
+
