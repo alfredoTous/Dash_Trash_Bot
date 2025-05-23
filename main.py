@@ -33,28 +33,36 @@ setup_containers()
 
 dragging = None
 score = 0
+mouse_held = None 
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            for trash in trashes:
-                hit_rect = trash.rect.inflate(10,10)
-                if hit_rect.collidepoint(event.pos):
-                    dragging = trash
-                    break
-        elif event.type == pygame.MOUSEBUTTONUP and dragging:
-            for container in containers:
-                if dragging.rect.colliderect(container.rect):
-                    if dragging.trash_type == container.container_type:
-                        score += 1
-                    else:
-                        score -= 1
-                    if dragging in trashes:
-                        trashes.remove(dragging)
-                    break
-            dragging = None
+            mouse_held = True
+
+        elif event.type == pygame.MOUSEBUTTONUP:
+            mouse_held = False
+            if dragging:
+                for container in containers:
+                    if dragging.rect.colliderect(container.rect):
+                        if dragging.trash_type == container.container_type:
+                            score += 1
+                        else:
+                            score -= 1
+                        if dragging in trashes:
+                            trashes.remove(dragging)
+                        break
+                dragging = None
+
+    if mouse_held and dragging is None:
+        mx, my = pygame.mouse.get_pos()
+        for trash in trashes:
+            hit_rect = trash.rect.inflate(10, 10)
+            if hit_rect.collidepoint(mx, my):
+                dragging = trash
+                break
 
     if dragging:
         mx, my = pygame.mouse.get_pos()
