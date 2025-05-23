@@ -17,6 +17,7 @@ def setup_containers():
     
 
 pygame.init()
+font = pygame.font.SysFont(None, 36)
 
 WIDTH, HEIGHT = 1280, 720
 screen = pygame.display.set_mode((WIDTH, HEIGHT))  
@@ -82,9 +83,13 @@ while running:
         trashes.append(Trash(trash_type, pos, scale, velocity))
 
     for trash in trashes[:]: 
+        if trash is dragging:
+            continue
+        
         trash.gravity()        
         if trash.rect.top > HEIGHT:
             trashes.remove(trash)
+            score -= 1
 
         for container in containers:
             if trash.rect.colliderect(container.rect):
@@ -106,6 +111,9 @@ while running:
     
     for trash in trashes:
         trash.draw(screen)
+        
+    score_text = font.render(f"Score: {score}", True, (0, 0, 0))
+    screen.blit(score_text, (20, 20))
 
     pygame.display.flip()
     clock.tick(FPS)
