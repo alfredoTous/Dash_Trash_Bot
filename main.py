@@ -35,6 +35,17 @@ setup_containers()
 dragging = None
 score = 0
 mouse_held = None 
+
+lives = 5
+
+actual_level = 0
+
+levels = [
+    {"time": 30000, "velocity": (3,6), "extra_lives": 5,"scale":(80,80), "trash_spawn_denominator": 50},
+    {"time": 35000, "velocity": (3,6), "extra_lives": 4,"scale":(70,70), "trash_spawn_denominator": 40},
+    {"time": 40000, "velocity": (4,7), "extra_lives": 3,"scale":(60,60), "trash_spawn_denominator": 30},
+]
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -75,17 +86,17 @@ while running:
         container.draw(screen)
         
 
-    if random.randint(1, 50) == 1:
+    if random.randint(1, levels[actual_level]["trash_spawn_denominator"]) == 1:
         trash_type = random.choice(["A", "B", "C", "D"])
         pos = Pos(random.randint(0, WIDTH - 50), 0)      
-        scale = Scale(70, 70)                            
-        velocity = random.randint(3, 7)                 
+        scale = Scale(*levels[actual_level]["scale"])                             
+        velocity = random.randint(*levels[actual_level]["velocity"])                 
         trashes.append(Trash(trash_type, pos, scale, velocity))
 
     for trash in trashes[:]: 
         if trash is dragging:
             continue
-        
+
         trash.gravity()        
         if trash.rect.top > HEIGHT:
             trashes.remove(trash)
