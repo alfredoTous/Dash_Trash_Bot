@@ -40,7 +40,8 @@ while running:
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
             for trash in trashes:
-                if trash.rect.collidepoint(event.pos):
+                hit_rect = trash.rect.inflate(10,10)
+                if hit_rect.collidepoint(event.pos):
                     dragging = trash
                     break
         elif event.type == pygame.MOUSEBUTTONUP and dragging:
