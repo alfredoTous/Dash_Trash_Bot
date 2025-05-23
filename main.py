@@ -31,20 +31,44 @@ containers = []
 running = True
 setup_containers()
 
+dragging = None
+score = 0
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            for trash in trashes:
+                if trash.rect.collidepoint(event.pos):
+                    dragging = trash
+                    break
+        elif event.type == pygame.MOUSEBUTTONUP and dragging:
+            for container in containers:
+                if dragging.rect.colliderect(container.rect):
+                    if dragging.trash_type == container.container_type:
+                        score += 1
+                    else:
+                        score -= 1
+                    if dragging in trashes:
+                        trashes.remove(dragging)
+                    break
+            dragging = None
+
+    if dragging:
+        mx, my = pygame.mouse.get_pos()
+        dragging.rect.center = (mx, my)
+
     screen.fill((220, 220, 220)) 
 
     for container in containers:
         container.draw(screen)
+        
 
-    if random.randint(1, 30) == 1:
+    if random.randint(1, 50) == 1:
         trash_type = random.choice(["A", "B", "C", "D"])
         pos = Pos(random.randint(0, WIDTH - 50), 0)      
-        scale = Scale(50, 50)                            
+        scale = Scale(70, 70)                            
         velocity = random.randint(3, 7)                 
         trashes.append(Trash(trash_type, pos, scale, velocity))
 
@@ -53,6 +77,23 @@ while running:
         if trash.rect.top > HEIGHT:
             trashes.remove(trash)
 
+        for container in containers:
+            if trash.rect.colliderect(container.rect):
+                if trash.trash_type == container.container_type:
+                    score += 1
+                else:
+                    score -= 1
+                trashes.remove(trash)
+                break
+    mx, my = pygame.mouse.get_pos()
+
+   
+    hovering = any(trash.rect.collidepoint((mx, my)) for trash in trashes)
+
+    if hovering:
+        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+    else:
+        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
     
     for trash in trashes:
         trash.draw(screen)
@@ -60,6 +101,7 @@ while running:
     pygame.display.flip()
     clock.tick(FPS)
 
+print(f"Puntaje: {score}")
 pygame.quit()
 sys.exit()
 
