@@ -8,3 +8,8 @@ Insane donde los contenedores tampoco tendran color
 En easy cada que se pasa de nivel los contyenedores se mantienen en el mismo lugar
 
 En hard los cada nuevo nivel los contenedores cambian de lugar entre si 
+
+Menu
+-Instrucciones
+-Dificultad
+-Records

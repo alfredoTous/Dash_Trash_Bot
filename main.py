@@ -41,11 +41,12 @@ lives = 5
 actual_level = 0
 
 levels = [
-    {"time": 30000, "velocity": (3,6), "extra_lives": 5,"scale":(80,80), "trash_spawn_denominator": 50},
-    {"time": 35000, "velocity": (3,6), "extra_lives": 4,"scale":(70,70), "trash_spawn_denominator": 40},
-    {"time": 40000, "velocity": (4,7), "extra_lives": 3,"scale":(60,60), "trash_spawn_denominator": 30},
+    {"duration": 30, "velocity": (3,6), "extra_lives": 5,"scale":(80,80), "trash_spawn_denominator": 50},
+    {"duration": 35, "velocity": (3,6), "extra_lives": 4,"scale":(70,70), "trash_spawn_denominator": 40},
+    {"duration": 40, "velocity": (4,7), "extra_lives": 3,"scale":(60,60), "trash_spawn_denominator": 30},
 ]
-
+level_start_time = pygame.time.get_ticks()
+level_finished = False
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -67,6 +68,10 @@ while running:
                             trashes.remove(dragging)
                         break
                 dragging = None
+    
+    seconds = (pygame.time.get_ticks() - level_start_time) // 1000
+    if seconds >= levels[actual_level]["duration"]:
+        level_finished = True
 
     if mouse_held and dragging is None:
         mx, my = pygame.mouse.get_pos()
@@ -110,6 +115,22 @@ while running:
                     score -= 1
                 trashes.remove(trash)
                 break
+
+    if level_finished:
+        actual_level += 1
+        if actual_level >= len(levels):
+            print("\nGame Completed")
+            running = False
+        else:
+            level_start_time = pygame.time.get_ticks()
+            level_finished = False
+            lives += levels[actual_level]["extra_lives"]
+            trashes.clear()  
+            dragging = None
+
+    level_text = font.render(f"Nivel: {actual_level + 1}", True, (0, 0, 0))
+    screen.blit(level_text, (20, 100))
+    
     mx, my = pygame.mouse.get_pos()
 
    
