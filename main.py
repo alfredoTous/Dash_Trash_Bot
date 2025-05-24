@@ -128,8 +128,11 @@ while running:
             trashes.clear()  
             dragging = None
 
-    level_text = font.render(f"Nivel: {actual_level + 1}", True, (0, 0, 0))
+    level_text = font.render(f"Level: {actual_level + 1}", True, (0, 0, 0))
     screen.blit(level_text, (20, 100))
+
+    time_text = font.render(f"Time: {seconds}", True, (0,0,0))
+    screen.blit(time_text, (1100,20))
     
     mx, my = pygame.mouse.get_pos()
 
