@@ -9,7 +9,10 @@ En easy cada que se pasa de nivel los contyenedores se mantienen en el mismo lug
 
 En hard los cada nuevo nivel los contenedores cambian de lugar entre si 
 
+
 Menu
 -Instrucciones
 -Dificultad
 -Records
+
+Poner Basura que no sea reciclable y que haya que dejar pasar

@@ -24,10 +24,7 @@ def text_to_screen(screen):
     screen.blit(time_text, (1100,20))
 
     score_text = font.render(f"Score: {score}", True, (0, 0, 0))
-    screen.blit(score_text, (20, 60))
-
-    lives_text = font.render(f"Lives: {lives}", True, (0,0,0))
-    screen.blit(lives_text,(20,20))
+    screen.blit(score_text, (20, 20))
 
 def spawn_trash():
     trash_type = random.choice(["A", "B", "C", "D"])
@@ -35,6 +32,14 @@ def spawn_trash():
     scale = Scale(*levels[actual_level]["scale"])                             
     velocity = random.randint(*levels[actual_level]["velocity"])                 
     trashes.append(Trash(trash_type, pos, scale, velocity))
+
+def draw_life_bar(screen, current, max_value):
+    
+    pygame.draw.rect(screen, (180, 180, 180), (20, 60, max_value, 20))  
+    pygame.draw.rect(screen, (255, 50, 50), (20, 60, current, 20))      
+    pygame.draw.rect(screen, (0, 0, 0), (20, 60, max_value, 20), 2)  
+
+
 
 
 pygame.init()
@@ -60,6 +65,9 @@ level_finished = False
 
 setup_containers()
 
+max_life_bar = 300
+life_bar = max_life_bar
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -67,7 +75,7 @@ while running:
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_held = True
-            
+
         #if mouse button was released, detects trash-container collision
         elif event.type == pygame.MOUSEBUTTONUP:
             mouse_held = False
@@ -78,6 +86,7 @@ while running:
                             score += 1
                         else:
                             score -= 1
+                            life_bar -= 5
                         if dragging in trashes:
                             trashes.remove(dragging)
                         break
@@ -123,6 +132,7 @@ while running:
         if trash.rect.top > HEIGHT:
             trashes.remove(trash)
             score -= 1
+            life_bar -= 2
 
         #Checks container-trash collision
         for container in containers:
@@ -131,6 +141,7 @@ while running:
                     score += 1
                 else:
                     score -= 1
+                    life_bar -= 3
                 trashes.remove(trash)
                 break
 
@@ -161,8 +172,16 @@ while running:
     for trash in trashes:
         trash.draw(screen)
     
-    #Draw text: lives,score,time,level
+    #Draw text: score,time,level
     text_to_screen(screen)
+
+    #Draw live bar
+    draw_life_bar(screen, life_bar, max_life_bar)
+
+    if life_bar <= 0:
+        running = False
+        print("You Lost!")
+
 
     pygame.display.flip()
     clock.tick(FPS)
