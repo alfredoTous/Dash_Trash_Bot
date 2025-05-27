@@ -3,7 +3,7 @@ import pygame
 import sys
 import random
 from classes import *
-from costants import *
+from constants import *
 
 def setup_containers():
     containers_scale = Scale(100,100)
@@ -40,8 +40,6 @@ def draw_life_bar(screen, current, max_value):
     pygame.draw.rect(screen, (0, 0, 0), (20, 60, max_value, 20), 2)  
 
 
-
-
 pygame.init()
 
 font = pygame.font.SysFont(None, 36)
@@ -67,6 +65,53 @@ setup_containers()
 
 max_life_bar = 300
 life_bar = max_life_bar
+
+def main_menu():
+    menu_running = True
+    options = ["Play", "AI", "Instructions", "Difficulty", "Records", "Exit"]
+    selected_option = 0
+    font = pygame.font.SysFont(None, 60)
+    title_font = pygame.font.SysFont(None, 80)
+
+    while menu_running:
+        screen.fill((50, 50, 80))  
+
+        title = title_font.render("Main Menu", True, (255, 255, 255))
+        screen.blit(title, (WIDTH // 2 - title.get_width() // 2, 80))
+
+        for i, option in enumerate(options):
+            color = (255, 255, 0) if i == selected_option else (255, 255, 255)
+            text = font.render(option, True, color)
+            screen.blit(text, (WIDTH // 2 - text.get_width() // 2, 200 + i * 70))
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_DOWN:
+                    selected_option = (selected_option + 1) % len(options)
+                elif event.key == pygame.K_UP:
+                    selected_option = (selected_option - 1) % len(options)
+                elif event.key == pygame.K_RETURN:
+                    if options[selected_option] == "Play":
+                        return "play"
+                    elif options[selected_option] == "Ai":
+                        return "AI"
+                    elif options[selected_option] == "Instructions":
+                        return "instructions"
+                    elif options[selected_option] == "Difficulty":
+                        return "difficulty"
+                    elif options[selected_option] == "Records":
+                        return "records"
+                    elif options[selected_option] == "Exit":
+                        pygame.quit()
+                        sys.exit()
+
+        pygame.display.flip()
+        clock.tick(FPS)
+
+choice_menu = main_menu()
 
 while running:
     for event in pygame.event.get():

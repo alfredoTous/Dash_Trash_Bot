@@ -15,4 +15,10 @@ Menu
 -Dificultad
 -Records
 
+Musica + Sonidos
+
+Imagen Basura y Contenedores
+
+IA
+
 Poner Basura que no sea reciclable y que haya que dejar pasar
