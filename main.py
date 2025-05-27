@@ -5,6 +5,14 @@ import random
 from classes import *
 from constants import *
 
+
+pygame.init()
+
+font = pygame.font.SysFont(None, 36)
+screen = pygame.display.set_mode((WIDTH, HEIGHT))  
+pygame.display.set_caption("Game Title")   
+clock = pygame.time.Clock()
+
 def setup_containers():
     containers_scale = Scale(100,100)
 
@@ -39,32 +47,6 @@ def draw_life_bar(screen, current, max_value):
     pygame.draw.rect(screen, (255, 50, 50), (20, 60, current, 20))      
     pygame.draw.rect(screen, (0, 0, 0), (20, 60, max_value, 20), 2)  
 
-
-pygame.init()
-
-font = pygame.font.SysFont(None, 36)
-screen = pygame.display.set_mode((WIDTH, HEIGHT))  
-pygame.display.set_caption("Game Title")   
-clock = pygame.time.Clock()
-
-trashes = []
-containers = []
-
-lives = 5
-actual_level = 0
-score = 0
-
-running = True
-dragging = None
-mouse_held = None 
-
-level_start_time = pygame.time.get_ticks()
-level_finished = False
-
-setup_containers()
-
-max_life_bar = 300
-life_bar = max_life_bar
 
 def main_menu():
     menu_running = True
@@ -111,127 +93,173 @@ def main_menu():
         pygame.display.flip()
         clock.tick(FPS)
 
-choice_menu = main_menu()
+def play_game():
 
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+    global trashes, containers, actual_level, score, seconds
 
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            mouse_held = True
+    trashes = []
+    containers = []
 
-        #if mouse button was released, detects trash-container collision
-        elif event.type == pygame.MOUSEBUTTONUP:
-            mouse_held = False
-            if dragging:
-                for container in containers:
-                    if dragging.rect.colliderect(container.rect):
-                        if dragging.trash_type == container.container_type:
-                            score += 1
-                        else:
-                            score -= 1
-                            life_bar -= 5
-                        if dragging in trashes:
-                            trashes.remove(dragging)
-                        break
-                dragging = None
-    
-    seconds = (pygame.time.get_ticks() - level_start_time) // 1000
-    if seconds >= levels[actual_level]["duration"]:
-        level_finished = True
+    lives = 5
+    actual_level = 0
+    score = 0
 
-    #Allows grabing trash if mouse is pressed before reaching trash hitbox
-    if mouse_held and dragging is None:
-        mx, my = pygame.mouse.get_pos()
-        for trash in trashes:
-            #Gives +10px to trash hitbox
-            hit_rect = trash.rect.inflate(10, 10)
-            if hit_rect.collidepoint(mx, my):
-                dragging = trash
-                break
+    running = True
+    dragging = None
+    mouse_held = None 
 
-    #If dragging move trash to cursor position
-    if dragging:
-        mx, my = pygame.mouse.get_pos()
-        dragging.rect.center = (mx, my)
+    level_start_time = pygame.time.get_ticks()
+    level_finished = False
 
-    #Background color
-    screen.fill((220, 220, 220)) 
+    setup_containers()
 
-    #Draw containers
-    for container in containers:
-        container.draw(screen)
+    max_life_bar = 300
+    life_bar = max_life_bar
+
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_held = True
+
+            #if mouse button was released, detects trash-container collision
+            elif event.type == pygame.MOUSEBUTTONUP:
+                mouse_held = False
+                if dragging:
+                    for container in containers:
+                        if dragging.rect.colliderect(container.rect):
+                            if dragging.trash_type == container.container_type:
+                                score += 1
+                            else:
+                                score -= 1
+                                life_bar -= 5
+                            if dragging in trashes:
+                                trashes.remove(dragging)
+                            break
+                    dragging = None
         
-    # Probability of 1/(level[trash_spawn_denominator]) of spawning trash per frame
-    if random.randint(1, levels[actual_level]["trash_spawn_denominator"]) == 1:
-        spawn_trash()
+        seconds = (pygame.time.get_ticks() - level_start_time) // 1000
+        if seconds >= levels[actual_level]["duration"]:
+            level_finished = True
 
-    for trash in trashes[:]:
-        #Don't check collision nor give gravity while dragging trash  
-        if trash is dragging:
-            continue
-        
-        trash.gravity()
-        #Remove if exceed screen        
-        if trash.rect.top > HEIGHT:
-            trashes.remove(trash)
-            score -= 1
-            life_bar -= 2
+        #Allows grabing trash if mouse is pressed before reaching trash hitbox
+        if mouse_held and dragging is None:
+            mx, my = pygame.mouse.get_pos()
+            for trash in trashes:
+                #Gives +10px to trash hitbox
+                hit_rect = trash.rect.inflate(10, 10)
+                if hit_rect.collidepoint(mx, my):
+                    dragging = trash
+                    break
 
-        #Checks container-trash collision
+        #If dragging move trash to cursor position
+        if dragging:
+            mx, my = pygame.mouse.get_pos()
+            dragging.rect.center = (mx, my)
+
+        #Background color
+        screen.fill((220, 220, 220)) 
+
+        #Draw containers
         for container in containers:
-            if trash.rect.colliderect(container.rect):
-                if trash.trash_type == container.container_type:
-                    score += 1
-                else:
-                    score -= 1
-                    life_bar -= 3
+            container.draw(screen)
+            
+        # Probability of 1/(level[trash_spawn_denominator]) of spawning trash per frame
+        if random.randint(1, levels[actual_level]["trash_spawn_denominator"]) == 1:
+            spawn_trash()
+
+        for trash in trashes[:]:
+            #Don't check collision nor give gravity while dragging trash  
+            if trash is dragging:
+                continue
+            
+            trash.gravity()
+            #Remove if exceed screen        
+            if trash.rect.top > HEIGHT:
                 trashes.remove(trash)
-                break
+                score -= 1
+                life_bar -= 2
 
-    #Change levels
-    if level_finished:
-        actual_level += 1
-        if actual_level >= len(levels):
-            print("\nGame Completed")
-            running = False
+            #Checks container-trash collision
+            for container in containers:
+                if trash.rect.colliderect(container.rect):
+                    if trash.trash_type == container.container_type:
+                        score += 1
+                    else:
+                        score -= 1
+                        life_bar -= 3
+                    trashes.remove(trash)
+                    break
+
+        #Change levels
+        if level_finished:
+            actual_level += 1
+            if actual_level >= len(levels):
+                print("\nGame Completed")
+                running = False
+            else:
+                level_start_time = pygame.time.get_ticks()
+                level_finished = False
+                lives += levels[actual_level]["extra_lives"]
+                trashes.clear()  
+                dragging = None
+        
+        
+        #Detects mouse hovers and changes cursor
+        mx, my = pygame.mouse.get_pos()
+        hovering = any(trash.rect.collidepoint((mx, my)) for trash in trashes)
+
+        if hovering:
+            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
         else:
-            level_start_time = pygame.time.get_ticks()
-            level_finished = False
-            lives += levels[actual_level]["extra_lives"]
-            trashes.clear()  
-            dragging = None
-    
-    
-    #Detects mouse hovers and changes cursor
-    mx, my = pygame.mouse.get_pos()
-    hovering = any(trash.rect.collidepoint((mx, my)) for trash in trashes)
+            pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+        
+        #Draw trash
+        for trash in trashes:
+            trash.draw(screen)
+        
+        #Draw text: score,time,level
+        text_to_screen(screen)
 
-    if hovering:
-        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-    else:
-        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
-    
-    #Draw trash
-    for trash in trashes:
-        trash.draw(screen)
-    
-    #Draw text: score,time,level
-    text_to_screen(screen)
+        #Draw live bar
+        draw_life_bar(screen, life_bar, max_life_bar)
 
-    #Draw live bar
-    draw_life_bar(screen, life_bar, max_life_bar)
-
-    if life_bar <= 0:
-        running = False
-        print("You Lost!")
+        if life_bar <= 0:
+            running = False
+            print("You Lost!")
 
 
-    pygame.display.flip()
-    clock.tick(FPS)
+        pygame.display.flip()
+        clock.tick(FPS)
 
-print(f"Puntaje: {score}")
-pygame.quit()
-sys.exit()
+    print(f"Score: {score}")
+
+game_state = "menu"
+
+while True:
+    if game_state == "menu":
+        choice = main_menu()
+        if choice == "play":
+            game_state = "play"
+        elif choice == "AI":
+            
+            pass
+        elif choice == "instructions":
+            
+            pass
+        elif choice == "difficulty":
+            
+            pass
+        elif choice == "records":
+            
+            pass
+        elif choice == "exit":
+            pygame.quit()
+            sys.exit()
+            
+    elif game_state == "play":
+        play_game()
+        game_state = "menu"  
 
