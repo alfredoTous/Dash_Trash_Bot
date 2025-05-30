@@ -13,13 +13,14 @@ class Trash:
 
     def draw(self, screen):
         if self.trash_type == "A":
-            color = (255, 0, 0)
+            color = (194, 126, 0)
         elif self.trash_type == "B":
-            color = (0, 255, 0)
+            color = (194, 0, 0)
         elif self.trash_type == "C":
-            color = (0, 0, 255)
+            color = (0, 0, 194)
         elif self.trash_type == "D":
-            color = (150, 150, 150)
+            color = (0, 194, 0)
+            
 
         pygame.draw.rect(screen, color, self.rect)
 
@@ -40,6 +41,7 @@ class Container:
     def __init__(self,screen,container_type,pos,scale):
         
         self.container_type = container_type
+
         self.rect = pygame.Rect(pos.x, pos.y, scale.w, scale.h)
         self.image = pygame.transform.scale(
             Container.SPRITESHEET.subsurface(Container.CONTAINER_SPRITE_MAP[container_type]),
@@ -48,6 +50,7 @@ class Container:
         
     def draw(self, screen):
         screen.blit(self.image, self.rect)
+        pygame.draw.rect(screen, (0, 255, 0), self.rect, 2)  # Borde verde
 
     def load_container_sprite():
         Container.SPRITESHEET = pygame.image.load("./assets/containers.png").convert_alpha()
