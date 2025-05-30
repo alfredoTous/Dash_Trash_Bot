@@ -7,6 +7,18 @@ from constants import *
 
 
 pygame.init()
+pygame.mixer.init()
+
+pygame.mixer.music.load("assets/bg_music_metal.wav")
+pygame.mixer.music.set_volume(0.75)     
+pygame.mixer.music.play(-1)  
+
+sfx_correct = pygame.mixer.Sound("assets/sfx_correct.wav")
+sfx_wrong   = pygame.mixer.Sound("assets/sfx_wrong.wav")
+
+sfx_correct.set_volume(0.5)
+sfx_wrong.set_volume(0.5)
+
 
 font = pygame.font.SysFont(None, 36)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))  
@@ -133,9 +145,11 @@ def play_game():
                         if container.collides(dragging.rect):
                             if dragging.trash_type == container.container_type:
                                 score += 1
+                                sfx_correct.play()
                             else:
                                 score -= 1
                                 life_bar -= 5
+                                sfx_wrong.play()
                             if dragging in trashes:
                                 trashes.remove(dragging)
                             break
@@ -182,15 +196,18 @@ def play_game():
                 trashes.remove(trash)
                 score -= 1
                 life_bar -= 2
+                sfx_wrong.play()
 
             #Checks container-trash collision
             for container in containers:
                 if container.collides(trash.rect):
                     if trash.trash_type == container.container_type:
                         score += 1
+                        sfx_correct.play()
                     else:
                         score -= 1
                         life_bar -= 3
+                        sfx_wrong.play()
                     trashes.remove(trash)
                     break
 

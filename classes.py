@@ -60,10 +60,8 @@ class Container:
         
     def draw(self, screen):
         screen.blit(self.image, self.rect)
-        pygame.draw.rect(screen, (0, 255, 0), self.hitbox, 2)
 
     def collides(self, other_rect):
-        # Para usar en colisiones
         return self.hitbox.colliderect(other_rect)
 
     def load_container_sprite():
