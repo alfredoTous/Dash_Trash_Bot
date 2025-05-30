@@ -14,15 +14,16 @@ pygame.display.set_caption("Game Title")
 clock = pygame.time.Clock()
 
 def setup_containers():
-    containers_scale = Scale(100,100)
+    containers_scale = Scale(170,170)
+    Container.load_container_sprite()
 
     spacing = (WIDTH - (containers_scale.w * 4)) // 5
 
     containers.clear()
-    containers.append(Container(screen,"A",Pos(spacing,600), containers_scale))
-    containers.append(Container(screen,"B",Pos(spacing*2 + containers_scale.w,600), containers_scale))
-    containers.append(Container(screen,"C",Pos(spacing*3 + (containers_scale.w*2),600), containers_scale))
-    containers.append(Container(screen,"D",Pos(spacing*4 + (containers_scale.w*3),600), containers_scale))
+    containers.append(Container(screen,"A",Pos(spacing,550), containers_scale))
+    containers.append(Container(screen,"B",Pos(spacing*2 + containers_scale.w,550), containers_scale))
+    containers.append(Container(screen,"C",Pos(spacing*3 + (containers_scale.w*2),550), containers_scale))
+    containers.append(Container(screen,"D",Pos(spacing*4 + (containers_scale.w*3),550), containers_scale))
 
 def text_to_screen(screen):
     level_text = font.render(f"Level: {actual_level + 1}", True, (0, 0, 0))
