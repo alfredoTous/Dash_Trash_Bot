@@ -130,7 +130,7 @@ def play_game():
                 mouse_held = False
                 if dragging:
                     for container in containers:
-                        if dragging.rect.colliderect(container.rect):
+                        if container.collides(dragging.rect):
                             if dragging.trash_type == container.container_type:
                                 score += 1
                             else:
@@ -185,7 +185,7 @@ def play_game():
 
             #Checks container-trash collision
             for container in containers:
-                if trash.rect.colliderect(container.rect):
+                if container.collides(trash.rect):
                     if trash.trash_type == container.container_type:
                         score += 1
                     else:

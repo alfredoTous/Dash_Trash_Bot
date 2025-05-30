@@ -47,10 +47,24 @@ class Container:
             Container.SPRITESHEET.subsurface(Container.CONTAINER_SPRITE_MAP[container_type]),
             (scale.w, scale.h)
         )
+
+        margin_x = int(scale.w * 0.15)
+        margin_y = int(scale.h * 0.15)  
+
+        self.hitbox = pygame.Rect(
+            self.rect.x + margin_x+10,
+            self.rect.y + margin_y+10,
+            self.rect.width - 2 * margin_x,
+            self.rect.height - 2 * margin_y
+        )
         
     def draw(self, screen):
         screen.blit(self.image, self.rect)
-        pygame.draw.rect(screen, (0, 255, 0), self.rect, 2)  # Borde verde
+        pygame.draw.rect(screen, (0, 255, 0), self.hitbox, 2)
+
+    def collides(self, other_rect):
+        # Para usar en colisiones
+        return self.hitbox.colliderect(other_rect)
 
     def load_container_sprite():
         Container.SPRITESHEET = pygame.image.load("./assets/containers.png").convert_alpha()
