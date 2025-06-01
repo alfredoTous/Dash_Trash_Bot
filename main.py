@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 import pygame
+from time import sleep
 import sys
 import random
 from classes import *
 from constants import *
+from AI import *
 
 
 pygame.init()
@@ -91,7 +93,7 @@ def main_menu():
                 elif event.key == pygame.K_RETURN:
                     if options[selected_option] == "Play":
                         return "play"
-                    elif options[selected_option] == "Ai":
+                    elif options[selected_option] == "AI":
                         return "AI"
                     elif options[selected_option] == "Instructions":
                         return "instructions"
@@ -262,8 +264,8 @@ while True:
         if choice == "play":
             game_state = "play"
         elif choice == "AI":
-            
-            pass
+            game_state = "AI"
+
         elif choice == "instructions":
             
             pass
@@ -279,5 +281,46 @@ while True:
             
     elif game_state == "play":
         play_game()
-        game_state = "menu"  
+        game_state = "menu" 
 
+    elif game_state == "AI":
+        print("AI TRAINING")
+        agent = Agent()
+        
+        best_duration = 0
+        episodes_without_improvement = 0
+        
+        for ep in range(10):  
+            print(f"\n--- Episode {ep + 1} ---")
+            print("🎮 Training... (F = alternate speed, SPACE = pause, ESC = exit)")
+            
+            if ep < 3:
+                initial_speed = "normal"
+            elif ep < 5:
+                initial_speed = "medium"
+            elif ep < 6: 
+                initial_speed = "fast"
+            else:
+                initial_speed = "ultra_fast"
+
+            reward, duration, correct, total = run_game(agent, training=True, episode_num=ep + 1, render=True, speed_mode=initial_speed)
+            accuracy = (correct / max(total, 1)) * 100
+            
+            print(f"Reward: {reward:.1f} | Epsilon: {agent.epsilon:.3f} | Accuracy: {accuracy:.1f}% ({correct}/{total})")
+
+        
+        print(f"\n✅ Finished Training")
+        
+        print("\nTesting trained AI at medium speed...")
+        sleep(2)
+        
+        test_epsilon = 0.05
+        agent.epsilon = test_epsilon
+
+        print(f"\n--- Test with epsilon: {test_epsilon} ---")
+        agent.epsilon = test_epsilon
+        reward, duration, correct, total = run_game(agent, training=False, render=True, speed_mode="medium") #Change this speed for testing the model
+        accuracy = (correct / max(total, 1)) * 100
+        print(f"🏆 Score: {reward:.1f} Correct: {correct} Total: {total} Accuracy: {accuracy:.1f}% ({correct}/{total})")
+        
+        pygame.quit()
