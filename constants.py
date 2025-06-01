@@ -9,8 +9,8 @@ levels = [
     {"duration": 41, "velocity": (5, 7), "extra_lives":  9, "scale": (66, 66), "trash_spawn_denominator": 38},
     {"duration": 44, "velocity": (5, 8), "extra_lives":  8, "scale": (62, 62), "trash_spawn_denominator": 35},
     {"duration": 47, "velocity": (5, 8), "extra_lives":  7, "scale": (58, 58), "trash_spawn_denominator": 32},
-    {"duration": 50, "velocity": (6, 8), "extra_lives":  6, "scale": (54, 54), "trash_spawn_denominator": 29},
-    {"duration": 53, "velocity": (6, 9), "extra_lives":  5, "scale": (50, 50), "trash_spawn_denominator": 23},
-    {"duration": 55, "velocity": (6, 9), "extra_lives":  5, "scale": (48, 48), "trash_spawn_denominator": 18},
+    {"duration": 40, "velocity": (6, 8), "extra_lives":  30, "scale": (54, 54), "trash_spawn_denominator": 29},
+    {"duration": 40, "velocity": (6, 9), "extra_lives":  30, "scale": (50, 50), "trash_spawn_denominator": 23},
+    {"duration": 30, "velocity": (6, 9), "extra_lives":  0, "scale": (48, 48), "trash_spawn_denominator": 20},
 ]
 

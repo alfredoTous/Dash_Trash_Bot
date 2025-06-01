@@ -65,7 +65,7 @@ class Container:
         return self.hitbox.colliderect(other_rect)
 
     def load_container_sprite():
-        Container.SPRITESHEET = pygame.image.load("./assets/containers.png").convert_alpha()
+        Container.SPRITESHEET = pygame.image.load("./assets/containers.png")
         
 
 class Pos:
